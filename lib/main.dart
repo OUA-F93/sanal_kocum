@@ -10,11 +10,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Sanal Kocum',
+      title: 'Sanal Koçum',
       theme: ThemeData(
         primarySwatch: Colors.orange,
-        scaffoldBackgroundColor: const Color.fromRGBO(
-            64, 135, 156, 1), // Arka plan rengini değiştirin
+        scaffoldBackgroundColor: const Color.fromRGBO(64, 135, 156, 1),
       ),
       home: const MyHomePage(
         title: 'Sanal Koçum',
@@ -55,9 +54,16 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  void printInfo() {
-    print('İsim: ${controller.text}');
-    print('Sınıf: $selectedClass');
+  void navigateToNewScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NewScreen(
+          name: controller.text,
+          selectedClass: selectedClass,
+        ),
+      ),
+    );
   }
 
   @override
@@ -103,11 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   '5. Sınıf',
                   '6. Sınıf',
                   '7. Sınıf',
-                  '8. Sınıf',
-                  '9. Sınıf',
-                  '10. Sınıf',
-                  '11. Sınıf',
-                  '12. Sınıf'
+                  '8. Sınıf'
                 ].map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -122,12 +124,242 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               const SizedBox(height: 50),
               ElevatedButton(
-                onPressed: printInfo,
-                child: const Text('Bilgileri Yazdır'),
+                onPressed: navigateToNewScreen,
+                child: const Text('Devam Et'),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class NewScreen extends StatelessWidget {
+  final String name;
+  final String? selectedClass;
+
+  const NewScreen({super.key, required this.name, required this.selectedClass});
+
+  void showSchedule(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => IntensitySelectionScreen(classLevel: selectedClass!),
+      ),
+    );
+  }
+
+  void showNotes(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const NotesScreen()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Yeni Ekran'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('İsim: $name', style: const TextStyle(fontSize: 20)),
+              const SizedBox(height: 20),
+              Text('Sınıf: $selectedClass', style: const TextStyle(fontSize: 20)),
+              const SizedBox(height: 50),
+              ElevatedButton(
+                onPressed: () => showSchedule(context),
+                child: const Text('Ders Programı'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => showNotes(context),
+                child: const Text('Notlar'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class IntensitySelectionScreen extends StatelessWidget {
+  final String classLevel;
+
+  const IntensitySelectionScreen({super.key, required this.classLevel});
+
+  void showSchedule(BuildContext context, String intensity) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ScheduleScreen(classLevel: classLevel, intensity: intensity),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Yoğunluk Seçimi'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => showSchedule(context, 'Az Yoğun'),
+              child: const Text('Az Yoğun'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => showSchedule(context, 'Çok Yoğun'),
+              child: const Text('Çok Yoğun'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ScheduleScreen extends StatelessWidget {
+  final String classLevel;
+  final String intensity;
+
+  ScheduleScreen({super.key, required this.classLevel, required this.intensity});
+
+  final Map<String, Map<String, Map<String, List<String>>>> schedules = {
+    '5. Sınıf': {
+      'Az Yoğun': {
+        '1. Gün': ['Türkçe'],
+        '2. Gün': ['Matematik'],
+        '3. Gün': ['Fen Bilimleri'],
+        '4. Gün': ['Din Kültürü'],
+        '5. Gün': ['İngilizce'],
+        '6. Gün': ['Sosyal Bilgiler'],
+        '7. Gün': [], // Haftada 1 gün boş
+      },
+      'Çok Yoğun': {
+        '1. Gün': ['Türkçe'],
+        '2. Gün': ['Matematik'],
+        '3. Gün': ['Fen Bilimleri'],
+        '4. Gün': ['Din Kültürü'],
+        '5. Gün': ['İngilizce'],
+        '6. Gün': ['Sosyal Bilgiler'],
+        '7. Gün': [], // Haftada 1 gün boş
+      },
+    },
+    '6. Sınıf': {
+      'Az Yoğun': {
+        '1. Gün': ['Türkçe'],
+        '2. Gün': ['Matematik'],
+        '3. Gün': ['Fen Bilimleri'],
+        '4. Gün': ['Din Kültürü'],
+        '5. Gün': ['İngilizce'],
+        '6. Gün': ['Sosyal Bilgiler'],
+        '7. Gün': [], // Haftada 1 gün boş
+      },
+      'Çok Yoğun': {
+        '1. Gün': ['Türkçe', 'Fen Bilimleri'],
+        '2. Gün': ['Matematik', 'Din Kültürü'],
+        '3. Gün': ['İngilizce', 'Sosyal Bilgiler'],
+        '4. Gün': ['Türkçe', 'Fen Bilimleri'],
+        '5. Gün': ['Matematik', 'İngilizce'],
+        '6. Gün': ['İngilizce', 'Sosyal Bilgiler'],
+        '7. Gün': [], // Haftada 1 gün boş
+      },
+    },
+    '7. Sınıf': {
+      'Az Yoğun': {
+        '1. Gün': ['Türkçe'],
+        '2. Gün': ['Matematik'],
+        '3. Gün': ['Fen Bilimleri'],
+        '4. Gün': ['Din Kültürü'],
+        '5. Gün': ['İngilizce'],
+        '6. Gün': ['Sosyal Bilgiler'],
+        '7. Gün': [], // Haftada 1 gün boş
+      },
+      'Çok Yoğun': {
+        '1. Gün': ['Türkçe', 'Fen Bilimleri'],
+        '2. Gün': ['Matematik', 'Din Kültürü'],
+        '3. Gün': ['İngilizce', 'Sosyal Bilgiler'],
+        '4. Gün': ['Türkçe', 'Fen Bilimleri'],
+        '5. Gün': ['Matematik', 'İngilizce'],
+        '6. Gün': ['İngilizce', 'Sosyal Bilgiler'],
+        '7. Gün': [], // Haftada 1 gün boş
+      },
+    },
+    '8. Sınıf': {
+      'Az Yoğun': {
+        '1. Gün': ['Türkçe'],
+        '2. Gün': ['Matematik'],
+        '3. Gün': ['Fen Bilimleri'],
+        '4. Gün': ['Din Kültürü'],
+        '5. Gün': ['İngilizce'],
+        '6. Gün': ['İnkılap'],
+        '7. Gün': [], // Haftada 1 gün boş
+      },
+
+      'Çok Yoğun': {
+       '1. Gün': ['Türkçe', 'Fen Bilimleri'],
+        '2. Gün': ['Matematik', 'Din Kültürü'],
+        '3. Gün': ['İngilizce', 'Sosyal Bilgiler'],
+        '4. Gün': ['Türkçe', 'Fen Bilimleri'],
+        '5. Gün': ['Matematik', 'İngilizce'],
+        '6. Gün': ['İngilizce', 'İnkılap'],
+        '7. Gün': [], // Haftada 1 gün boş
+
+      },
+    },
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('$classLevel - $intensity Ders Programı'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: 7, // Haftanın 7 günü
+          itemBuilder: (context, index) {
+            String day = '${index + 1}. Gün';
+            List<String>? subjects = schedules[classLevel]?[intensity]?[day];
+            String subtitle = subjects == null || subjects.isEmpty ? 'Boş' : subjects.join(', ');
+
+            return ListTile(
+              title: Text(day),
+              subtitle: Text(subtitle),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+
+class NotesScreen extends StatelessWidget {
+  const NotesScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Notlar'),
+      ),
+      body: const Center(
+        child: Text('Notlar ekranı burada olacak'),
       ),
     );
   }
