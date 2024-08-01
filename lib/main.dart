@@ -153,7 +153,7 @@ class NewScreen extends StatelessWidget {
   void showNotes(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const NotesScreen()),
+      MaterialPageRoute(builder: (context) => NotesScreen()),
     );
   }
 
@@ -308,16 +308,14 @@ class ScheduleScreen extends StatelessWidget {
         '6. Gün': ['İnkılap'],
         '7. Gün': [], // Haftada 1 gün boş
       },
-
       'Çok Yoğun': {
-       '1. Gün': ['Türkçe', 'Fen Bilimleri'],
+        '1. Gün': ['Türkçe', 'Fen Bilimleri'],
         '2. Gün': ['Matematik', 'Din Kültürü'],
         '3. Gün': ['İngilizce', 'Sosyal Bilgiler'],
         '4. Gün': ['Türkçe', 'Fen Bilimleri'],
         '5. Gün': ['Matematik', 'İngilizce'],
         '6. Gün': ['İngilizce', 'İnkılap'],
         '7. Gün': [], // Haftada 1 gün boş
-
       },
     },
   };
@@ -348,9 +346,21 @@ class ScheduleScreen extends StatelessWidget {
   }
 }
 
+class NotesScreen extends StatefulWidget {
+  @override
+  _NotesScreenState createState() => _NotesScreenState();
+}
 
-class NotesScreen extends StatelessWidget {
-  const NotesScreen({super.key});
+class _NotesScreenState extends State<NotesScreen> {
+  List<String> notes = [];
+  TextEditingController noteController = TextEditingController();
+
+  void addNote() {
+    setState(() {
+      notes.add(noteController.text);
+      noteController.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -358,8 +368,35 @@ class NotesScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Notlar'),
       ),
-      body: const Center(
-        child: Text('Notlar ekranı burada olacak'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: noteController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Notunuzu girin',
+              ),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: addNote,
+              child: const Text('Not Ekle'),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: notes.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(notes[index]),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
